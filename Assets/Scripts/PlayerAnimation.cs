@@ -7,6 +7,7 @@ public class PlayerAnimation : MonoBehaviour
 
 {
     
+    
     private const string IS_WALKING = "IsWalking";
     [SerializeField] private Player player;
     private Animator animator;
@@ -16,7 +17,7 @@ public class PlayerAnimation : MonoBehaviour
         
     }
 
-    private void Update()
+    public void Update()
     {
         animator.SetBool(IS_WALKING, player.isWalking);
     }
