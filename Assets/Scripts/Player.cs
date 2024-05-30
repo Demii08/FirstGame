@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,47 +7,78 @@ using UnityEngine.UIElements;
 
 public class Player : MonoBehaviour
 {
+    public event EventHandler <OnSelectedCounterChangedEventArgs> OnSelectedCounterChanged;
+
+    public class OnSelectedCounterChangedEventArgs : EventArgs
+    {
+        public ClearCounter selectedCounter;
+    }
+    
     [SerializeField] private float moveSpeed = 7f;
     [SerializeField] private GameInput _gameInput;
     [SerializeField] private LayerMask countersLayerMask;
-    
+    private ClearCounter selectedCounter;
+
     private float rotateSpeed;
     float playerHeight = 2f;
     [SerializeField] private float playerRadius = .01f;
     public bool isWalking;
     private Vector3 lastInteractDir;
 
+    private void Start()
+    {
+        _gameInput.OnInteractAction += GameInput_OnInteractAction;
+    }
+
+    private void GameInput_OnInteractAction(object sender, EventArgs e)
+    {
+        if (selectedCounter != null)
+        {
+            selectedCounter.Interact();
+        }
+       
+    }
+
     private void Update()
     {
         HandleMovement();
         HandleInteractions();
     }
-    
+
     public bool IsWalking()
     {
         return isWalking;
     }
+
     private void HandleInteractions()
     {
         Vector2 inputVector = _gameInput.GetMovementVectorNormalized();
         Vector3 moveDir = new Vector3(inputVector.x, 0f, inputVector.y);
-        if (moveDir != Vector3.zero) 
+        if (moveDir != Vector3.zero)
         {
             lastInteractDir = moveDir;
         }
+
         float interactDistance = 2f;
 
-        if (Physics.Raycast(transform.position, lastInteractDir, out RaycastHit raycastHit, interactDistance, countersLayerMask))
+        if (Physics.Raycast(transform.position, lastInteractDir, out RaycastHit raycastHit, interactDistance,
+                countersLayerMask))
 
         {
             if (raycastHit.transform.TryGetComponent(out ClearCounter clearCounter))
             {
                 //Has ClearCounter
-                clearCounter.Interact();
+                selectedCounter = clearCounter;
             }
-
-        }    
-
+            else
+            {
+                selectedCounter = null;
+            }
+        }
+        else
+        {
+            selectedCounter = null;
+        }
     }
 
 
@@ -74,8 +106,6 @@ public class Player : MonoBehaviour
                 //Can move only on the X
 
                 moveDir = moveDirX;
-
-
             }
 
             else
@@ -89,30 +119,21 @@ public class Player : MonoBehaviour
                     playerRadius, moveDirZ, moveDistance);
 
                 if (canMoveZ)
-                //can move only on the Z
+                    //can move only on the Z
                 {
                     moveDir = moveDirZ;
-
                 }
-
 
 
                 else
                 {
                     //cannot move in any direction
-
-
                 }
-
             }
-
-
-
         }
 
         if (canMove)
         {
-
             transform.position += moveDir * moveDistance;
         }
 
@@ -120,11 +141,5 @@ public class Player : MonoBehaviour
         float rotateSpeed = 15f;
 
         transform.forward = Vector3.Slerp(transform.forward, moveDir, Time.deltaTime * rotateSpeed);
-
     }
-
-
 }
-
-
-   
