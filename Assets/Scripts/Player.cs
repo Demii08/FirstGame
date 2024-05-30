@@ -9,9 +9,10 @@ public class Player : MonoBehaviour
     [SerializeField] private float moveSpeed = 7f;
     [SerializeField] private GameInput _gameInput;
     [SerializeField] private LayerMask countersLayerMask;
+    
     private float rotateSpeed;
     float playerHeight = 2f;
-    float playerRadius = .01f;
+    [SerializeField] private float playerRadius = .01f;
     public bool isWalking;
     private Vector3 lastInteractDir;
 
@@ -56,8 +57,6 @@ public class Player : MonoBehaviour
         Vector3 moveDir = new Vector3(inputVector.x, 0f, inputVector.y);
 
         float moveDistance = moveSpeed * Time.deltaTime;
-        float playerRadius = .02f;
-        float playerHeight = 4f;
         bool canMoveX, canMoveZ;
         bool canMove = !Physics.CapsuleCast(transform.position, transform.position + Vector3.up * playerHeight,
             playerRadius, moveDir, moveDistance);

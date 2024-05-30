@@ -7,14 +7,16 @@ public class GameInput : MonoBehaviour
 
 {
    private PlayerInputActions _playerInputActions;
+   public event EventHandler OnInteractAction; 
 
    private void Awake()
    {
       _playerInputActions = new PlayerInputActions();
       
-      _playerInputActions.Player.Move.Enable();
+      _playerInputActions.Player.Enable();
 
-       
+      //_playerInputActions.Player.
+      
 
    }
 

@@ -173,6 +173,7 @@ MonoBehaviour:
   countersLayerMask:
     serializedVersion: 2
     m_Bits: 64
+  playerRadius: 0.7
   isWalking: 0
 --- !u!1 &640261366
 GameObject:
