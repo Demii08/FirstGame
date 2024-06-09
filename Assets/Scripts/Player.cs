@@ -6,7 +6,10 @@ using UnityEngine.EventSystems;
 using UnityEngine.UIElements;
 
 public class Player : MonoBehaviour
-{
+{  
+    public static Player Instance { get; private set; }
+    
+        
     public event EventHandler <OnSelectedCounterChangedEventArgs> OnSelectedCounterChanged;
 
     public class OnSelectedCounterChangedEventArgs : EventArgs
@@ -24,6 +27,16 @@ public class Player : MonoBehaviour
     [SerializeField] private float playerRadius = .01f;
     public bool isWalking;
     private Vector3 lastInteractDir;
+
+    private void Awake()
+    {
+        if (Instance != null)
+        {
+            Debug.LogError("There is more than one player instance");
+        }
+        Instance = this;
+    }
+    
 
     private void Start()
     {
@@ -68,16 +81,23 @@ public class Player : MonoBehaviour
             if (raycastHit.transform.TryGetComponent(out ClearCounter clearCounter))
             {
                 //Has ClearCounter
-                selectedCounter = clearCounter;
+                SetSelectedCounter(clearCounter);
+
+                OnSelectedCounterChanged?.Invoke(this, new OnSelectedCounterChangedEventArgs
+                {
+                    selectedCounter = selectedCounter
+                });
             }
             else
             {
-                selectedCounter = null;
+                SetSelectedCounter(null);
+                
             }
         }
         else
         {
-            selectedCounter = null;
+            SetSelectedCounter(null);
+            
         }
     }
 
@@ -141,5 +161,15 @@ public class Player : MonoBehaviour
         float rotateSpeed = 15f;
 
         transform.forward = Vector3.Slerp(transform.forward, moveDir, Time.deltaTime * rotateSpeed);
+    }
+
+    private void SetSelectedCounter(ClearCounter selectedCounter)
+    {
+        this.selectedCounter = selectedCounter;
+        
+        OnSelectedCounterChanged?.Invoke(this, new OnSelectedCounterChangedEventArgs
+        {
+            selectedCounter = selectedCounter
+        });
     }
 }

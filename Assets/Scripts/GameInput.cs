@@ -17,11 +17,9 @@ public class GameInput : MonoBehaviour
       _playerInputActions.Player.Enable();
 
       _playerInputActions.Player.Interact.performed += Interact_perfomed;
-
-
-
-
+      
    }
+   
 
    private void Interact_perfomed(InputAction.CallbackContext obj)
    {
